@@ -1,3 +1,6 @@
+import ingridients.Ingredient;
+import ingridients.IngredientResponse;
+import ingridients.manager.IngredientManager;
 import io.qameta.allure.Allure;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
@@ -14,6 +17,7 @@ import user.manager.UserManager;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -27,6 +31,7 @@ public class CreateOrderTest {
     private boolean expectedSuccess;
     private boolean isAuthorized;
     private int expectedResponseCode;
+    private static List<String> ingredientIds;
 
     @Before
     public void setUp() {
@@ -44,11 +49,19 @@ public class CreateOrderTest {
 
     @Parameterized.Parameters(name = "{index}: Авторизация пользователя ={0}, Ингредиенты ={1}, Ожидаемый результат ={2}, Код ответа ={3} ")
     public static Collection<Object[]> data() {
+        IngredientManager ingredientManager = new IngredientManager();
+        IngredientResponse ingredientResponse = ingredientManager.takeIngredientList();
+        ingredientIds = ingredientResponse
+                .getData()
+                .stream()
+                .map(Ingredient::getId)
+                .collect(Collectors.toList());
+
         return Arrays.asList(new Object[][] {
                 // Создание заказа с авторизацией и правильными ингредиентами
-                { true, Arrays.asList("61c0c5a71d1f82001bdaaa6d", "61c0c5a71d1f82001bdaaa6e"), true, 200 },
+                { true, ingredientIds.subList(0,10), true, 200 },
                 // Создание заказа без авторизации и правильными ингредиентами
-                { false, Arrays.asList("61c0c5a71d1f82001bdaaa6c", "61c0c5a71d1f82001bdaaa74"), true, 200 },
+                { false, ingredientIds.subList(1,5), true, 200 },
                 // Создание заказа с авторизацией, но без ингредиентов
                 { true, Arrays.asList(), false, 400 },
                 // Создание заказа с авторизацией и неверным хешем ингредиентов
