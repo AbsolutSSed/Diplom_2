@@ -3,6 +3,7 @@ import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
 import order.Order;
 import order.manager.OrderManager;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -80,5 +81,10 @@ public class CreateOrderTest {
             assertFalse(isSuccess);
         }
     }
-
+    @After
+    public void deleteCreatedUsers() {
+        if (isAuthorized) {
+            userManager.deleteUser(accessToken);
+        }
+    }
 }

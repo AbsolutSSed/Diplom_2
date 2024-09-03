@@ -24,23 +24,31 @@ public class LoginUserTest {
         Response loginResponse = userManager.userLogin(user);
         UserResponses userResponses = loginResponse.getBody().as(UserResponses.class);
         assertEquals(true,userResponses.isSuccess());
+        userManager.userLoginAndExtractToken(user);
+        String accessToken = userManager.userLoginAndExtractToken(user);
+        userManager.deleteUser(accessToken);
     }
     @Test
     @DisplayName("Невозможно войти в учетную запись пользователя с неверным паролем")
     public void loginInvalidPasswordUserAccount(){
         userManager.createNewUser(user);
+        String accessToken = userManager.userLoginAndExtractToken(user);
         user.setPassword("invalidpass");
         Response loginResponse = userManager.userLogin(user);
         UserResponses userResponses = loginResponse.getBody().as(UserResponses.class);
         assertEquals(false,userResponses.isSuccess());
+        userManager.deleteUser(accessToken);
     }
     @Test
     @DisplayName("Невозможно войти в учетную запись пользователя с неверным email")
     public void loginInvalidEmailUserAccount(){
         userManager.createNewUser(user);
+        String accessToken = userManager.userLoginAndExtractToken(user);
         user.setEmail("invalidemail");
         Response loginResponse = userManager.userLogin(user);
         UserResponses userResponses = loginResponse.getBody().as(UserResponses.class);
         assertEquals(false,userResponses.isSuccess());
+        userManager.deleteUser(accessToken);
     }
+
 }

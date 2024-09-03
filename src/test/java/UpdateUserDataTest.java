@@ -29,6 +29,7 @@ public class UpdateUserDataTest {
         Response updateResponse = userManager.updateLoggedUserData(user,accessToken);
         UserResponses userResponses = updateResponse.getBody().as(UserResponses.class);
         assertEquals(true,userResponses.isSuccess());
+        userManager.deleteUser(accessToken);
     }
     @Test
     @DisplayName("Изменение пользовательского имени авторизованного пользователя")
@@ -38,6 +39,7 @@ public class UpdateUserDataTest {
         Response updateResponse = userManager.updateLoggedUserData(user,accessToken);
         UserResponses userResponses = updateResponse.getBody().as(UserResponses.class);
         assertEquals(true,userResponses.isSuccess());
+        userManager.deleteUser(accessToken);
     }
     @Test
     @DisplayName("Невозможно изменить email неавторизованным пользователем")
